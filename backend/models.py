@@ -26,7 +26,7 @@ class Sensor_class(Base):
     user_id = Column(Integer, ForeignKey("User.id"), nullable=False)
     
     user = relationship(
-        "User_class",
+        "User_Class",
         back_populates="sensors"
     )
 
