@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Body
 from sqlalchemy.orm import Session, selectinload
 from dotenv import load_dotenv
 from pydantic import BaseModel
@@ -11,8 +11,21 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError, ExpiredSignatureError
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 load_dotenv()
 
 key = os.getenv("KEY")
@@ -92,13 +105,13 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(oauth2_
     return user
 
 @app.post("/create_sensor", response_model=CreateSensorOutput, status_code=201)
-def create_sensor(user_input_data: Input_sensor, db:Session = Depends(get_db)):
+def create_sensor(user_input_data: Input_sensor, db:Session = Depends(get_db), current_user: User_Class = Depends(get_current_user)):
     sensor_exists = db.query(exists().where(Sensor_class.name == user_input_data.name)).scalar()
     
     if sensor_exists:
         raise HTTPException(status_code=409, detail="Sensor already exists.")
     
-    add_new_sensor = Sensor_class(name=user_input_data.name, type=user_input_data.type, localization=user_input_data.localization)
+    add_new_sensor = Sensor_class(name=user_input_data.name, type=user_input_data.type, localization=user_input_data.localization, user_id=1)
     db.add(add_new_sensor)
     db.commit()
     db.refresh(add_new_sensor)
