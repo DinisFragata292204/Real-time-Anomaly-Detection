@@ -1,9 +1,9 @@
 import os
-from fastapi import FastAPI, HTTPException, Depends, status, Body
-from sqlalchemy.orm import Session, selectinload
+from fastapi import FastAPI, HTTPException, Depends, status
+from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from sqlalchemy import desc, exists, delete, or_
+from sqlalchemy import desc, exists, or_
 from typing import List
 from models import User_Class, Sensor_class, SensorData_class, Alert_class
 from database import get_db
@@ -88,6 +88,19 @@ class AlertOutput(BaseModel):
     class Config:
         from_attributes = True
 
+class ReturnSensorsOfUser(BaseModel):
+    id: int
+    name: str
+    type: str
+    localization: str
+
+    class Config:
+        from_attributes = True
+
+class check_if_user_exists_input(BaseModel):
+    username: str
+    email: str
+
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     token = credentials.credentials
     try:
@@ -101,22 +114,19 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(oauth2_
         raise HTTPException(401, "Invalid token format.")
     user = db.query(User_Class).filter(User_Class.username == username).first()
     if user is None:
-        raise HTTPException(401, "User not found.")
+        raise HTTPException(401, "user not found.")
     return user
 
-@app.post("/create_sensor", response_model=CreateSensorOutput, status_code=201)
-def create_sensor(user_input_data: Input_sensor, db:Session = Depends(get_db), current_user: User_Class = Depends(get_current_user)):
-    sensor_exists = db.query(exists().where(Sensor_class.name == user_input_data.name)).scalar()
-    
-    if sensor_exists:
-        raise HTTPException(status_code=409, detail="Sensor already exists.")
-    
-    add_new_sensor = Sensor_class(name=user_input_data.name, type=user_input_data.type, localization=user_input_data.localization, user_id=1)
-    db.add(add_new_sensor)
-    db.commit()
-    db.refresh(add_new_sensor)
-
-    return add_new_sensor
+@app.post("/login", response_model=Token)
+def login(data: LoginInput, db: Session = Depends(get_db)):
+    get_data_of_a_user = db.query(User_Class).where(User_Class.username == data.username).first()
+    if not get_data_of_a_user:
+        raise(HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Error. User not found."))
+    verify_password = pwd_context.verify(data.password, get_data_of_a_user.password)
+    if not verify_password:
+        raise(HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Error. Password doesn't match."))
+    encoded = jwt.encode({"sub": get_data_of_a_user.username, "email": get_data_of_a_user.email, "exp": datetime.now(timezone.utc) + timedelta(days=1)}, key, algorithm="HS256")
+    return {"access_token": encoded, "token_type": "bearer"}
 
 @app.post("/receive_data", response_model=receiveSensorOutput, status_code=201)
 def post_sensor_data(user_input_data: Input_data, db:Session = Depends(get_db)):
@@ -141,21 +151,7 @@ def post_sensor_data(user_input_data: Input_data, db:Session = Depends(get_db)):
     db.refresh(add_data_to_sensorData)
     return add_data_to_sensorData
 
-@app.get("/get_data/{n_reads}", response_model=List[receiveSensorOutput])
-def get_sensor_data(n_reads: int, db: Session = Depends(get_db)):
-    return db.query(SensorData_class).order_by(desc(SensorData_class.timestamp)).limit(n_reads).all()
-
-@app.get("/alerts", response_model=List[AlertOutput])
-def get_alerts(db: Session = Depends(get_db)):
-    return db.query(Alert_class).all()
-
-
-
-
-
-
-
-@app.post("/users", response_model=UserOutput, status_code=status.HTTP_201_CREATED)
+@app.post("/create_new_user", response_model=UserOutput, status_code=status.HTTP_201_CREATED)
 def create_user(data: UserInput, db: Session = Depends(get_db)):
     user_exists = db.query(exists().where(or_(User_Class.username == data.username, User_Class.email == data.email))).scalar()
     if user_exists:
@@ -168,24 +164,48 @@ def create_user(data: UserInput, db: Session = Depends(get_db)):
     db.refresh(save_data_of_user)
     return save_data_of_user
 
-@app.get("/users/check")
-def check_user(username_user: str, email_user: str, db: Session = Depends(get_db)):
-    username_exists = db.query(exists().where(User_Class.username == username_user)).scalar()
-    email_exists = db.query(exists().where(User_Class.email == email_user)).scalar()
-    return {"Username exists:": username_exists, "Email exists:": email_exists}
+@app.post("/check_if_user_exists")
+def check_user(data: check_if_user_exists_input, db: Session = Depends(get_db)):
+    username_exists = db.query(exists().where(User_Class.username == data.username)).scalar()
+    email_exists = db.query(exists().where(User_Class.email == data.email)).scalar()
+    if username_exists == True:
+        return {"User exists": True, "Reason": "username"}
+    elif email_exists == True:
+        return {"User exists": True, "Reason": "email"}
+    return {"User exists": False}
 
-#ex 2
-@app.post("/login", response_model=Token)
-def login(data: LoginInput, db: Session = Depends(get_db)):
-    get_data_of_a_user = db.query(User_Class).where(User_Class.username == data.username).first()
-    if not get_data_of_a_user:
-        raise(HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Error. User not found."))
-    verify_password = pwd_context.verify(data.password, get_data_of_a_user.password)
-    if not verify_password:
-        raise(HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Error. Password doesn't match."))
-    encoded = jwt.encode({"sub": get_data_of_a_user.username, "email": get_data_of_a_user.email, "exp": datetime.now(timezone.utc) + timedelta(days=1)}, key, algorithm="HS256")
-    return {"access_token": encoded, "token_type": "bearer"}
+@app.post("/user/create_sensor", response_model=CreateSensorOutput, status_code=201)
+def create_sensor(user_input_data: Input_sensor, db:Session = Depends(get_db), current_user: User_Class = Depends(get_current_user)):
+    sensor_exists = db.query(exists().where(Sensor_class.name == user_input_data.name, Sensor_class.user_id == current_user.id)).scalar()
+    
+    if sensor_exists:
+        raise HTTPException(status_code=409, detail="Sensor already exists.")
+    
+    add_new_sensor = Sensor_class(name=user_input_data.name, type=user_input_data.type, localization=user_input_data.localization, user_id=current_user.id)
+    db.add(add_new_sensor)
+    db.commit()
+    db.refresh(add_new_sensor)
 
-@app.get("/me")
+    return add_new_sensor
+
+@app.get("/user/isloggedin")
 def me(current_user = Depends(get_current_user)):
-    return current_user
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Not logged in.")
+    return {"message": "User is logged in."}
+
+@app.get("/user/sensor/get_data/{n_reads}/{sensor_id}", response_model=List[receiveSensorOutput])
+def get_sensor_data(n_reads: int, sensor_id: int, db: Session = Depends(get_db), current_user: User_Class = Depends(get_current_user)):
+    return db.query(SensorData_class).order_by(desc(SensorData_class.timestamp)).filter(SensorData_class.sensor_id == sensor_id).limit(n_reads).all()
+
+@app.get("/user/sensor/alerts/{sensor_id}", response_model=List[AlertOutput])
+def get_alerts(sensor_id: int, db: Session = Depends(get_db)):
+    return db.query(Alert_class).filter(Alert_class.sensor_id == sensor_id).all()
+
+@app.get("/user/get_sensors", response_model=List[ReturnSensorsOfUser])
+def get_sensors_of_user(db: Session = Depends(get_db), current_user: User_Class = Depends(get_current_user)):
+    return db.query(Sensor_class).filter(Sensor_class.user_id == current_user.id).all()
+
+#@app.get("/user/me")
+#def me(current_user = Depends(get_current_user)):
+#   return current_user
