@@ -1,21 +1,46 @@
-export default function ListOfSensors({ sensors, onSensorClick }) {
+export default function ListOfSensors({ sensors, onSensorClick, selectedSensorId }) {
+    const hasSensors = sensors.length > 0;
     return (
-        <table className="bg-slate-600 p-4 rounded-lg shadow">
-            <thead className="text-black">
+        <table className="w-full bg-white rounded-lg shadow overflow-hidden text-left">
+            <thead className="dark:bg-blue-950 bg-blue-600 text-white">
                 <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Location</th>
+                    <th className="px-4 py-2 font-medium">Name</th>
+                    <th className="px-4 py-2 font-medium">Type</th>
+                    <th className="px-4 py-2 font-medium">Location</th>
                 </tr>
             </thead>
-            <tbody className="table-body">
-                {sensors.map((item) => (
-                <tr className="hover:bg-gray-100 cursor-pointer text-black" key={item.id} onClick={() => onSensorClick(item.id)}>
-                    <td>{item.name}</td>
-                    <td>{item.type}</td>
-                    <td>{item.localization}</td>
-                </tr>
-                ))}
+
+            <tbody className="dark:bg-gray-900 bg-gray-100">
+
+                {hasSensors ? (
+                    sensors.map((item) => {
+                        const isSelected = item.id === selectedSensorId;
+
+                        return (
+                            <tr
+                                key={item.id}
+                                onClick={() => onSensorClick(item.id)}
+                                className={`cursor-pointer transition-colors
+                                    ${isSelected ? "dark:bg-gray-700 bg-blue-100" : "hover:bg-blue-50 dark:hover:bg-gray-600"}
+                                `}
+                            >
+                                <td className="px-4 py-2 border-b">{item.name}</td>
+                                <td className="px-4 py-2 border-b">{item.type}</td>
+                                <td className="px-4 py-2 border-b">{item.localization}</td>
+                            </tr>
+                        );
+                    })
+                ) : (
+                    <tr>
+                        <td
+                            colSpan="3"
+                            className="px-4 py-3 border-b text-center text-gray-500 italic"
+                        >
+                            You don't have sensors yet.
+                        </td>
+                    </tr>
+                )}
+
             </tbody>
         </table>
     );

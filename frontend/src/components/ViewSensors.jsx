@@ -16,7 +16,6 @@ export default function CreateSensor() {
             body: JSON.stringify({name: name, type: type, localization: localization}),
         })
         const data = await res.json();
-        console.log("data: ",data);
         setData(data);
     }
 

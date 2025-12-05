@@ -8,7 +8,6 @@ class User_Class(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(100), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
-    email = Column(String(255), unique=True, nullable=False)
 
     sensors = relationship(
         "Sensor_class",
@@ -22,6 +21,8 @@ class Sensor_class(Base):
     name = Column(String(255), nullable=False)
     type = Column(String(255), nullable=False)
     localization = Column(String(255), nullable=False)
+    
+    api_key = Column(String(255), unique=True, nullable=False)
 
     user_id = Column(Integer, ForeignKey("User.id"), nullable=False)
     
