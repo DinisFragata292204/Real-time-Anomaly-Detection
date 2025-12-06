@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SimpleLogin from './components/Login/Login.jsx';
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
-import CreateSensor from "./pages/CreateSensor.jsx";
+import CreateSensor from "./components/Add_Sensor/AddSensor.jsx";
 import CreateNewUser from "./components//Login/CreateNewUser.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 

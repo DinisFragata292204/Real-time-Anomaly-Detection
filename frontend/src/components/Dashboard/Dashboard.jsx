@@ -21,11 +21,16 @@ export default function Dashboard() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isToSimulate, setIsToSimulate] = useState(false);
   const [apiKeyData, setAPIKeyData] = useState("");
+  const [showSensorToken, setShowSensorToken] = useState("");
 
   const [open, setOpen] = useState(false);
+  const [showSensorTokenOpen, setShowSensorTokenOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
+
+  const handleCloseShowSensorToken = () => setShowSensorTokenOpen(false);
+  const handleOpenShowSensorToken = () => setShowSensorTokenOpen(true);
 
   useEffect(() => {
     async function loadSensors() {
@@ -130,8 +135,25 @@ export default function Dashboard() {
     navigate("/");
   }
 
+  async function show_SensorToken() {
+    if (sensor_id) {
+      const res = await fetch(`http://127.0.0.1:8000/user/show_sensor_token/${sensor_id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = await res.json();
+      setShowSensorToken(data);
+      handleOpenShowSensorToken();
+    }
+  }
+
   return (
-    <div className="min-h-screen w-screen dark:bg-gray-900 bg-amber-200">
+    <div className="min-h-screen w-screen dark:bg-gray-900 bg-cyan-100">
       <header className="flex items-center justify-between px-6 py-4 dark:bg-gray-900 bg-white shadow-md">
         <button
           onClick={() => setIsMenuOpen(true)}
@@ -143,24 +165,32 @@ export default function Dashboard() {
 
         <div className="space-x-3 invisible md:visible">
           {sensor_id && (
-            <button
-              onClick={handleOpen}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-            >
-              Simulate data
-            </button>
+            <>
+              <button
+                onClick={handleOpen}
+                className="bg-green-600 hover:bg-green-700 dark:text-white text-black px-4 py-2 rounded"
+              >
+                Simulate data
+              </button>
+              <button
+                onClick={show_SensorToken}
+                className="bg-green-600 hover:bg-green-700 dark:text-white text-black px-4 py-2 rounded"
+              >
+                Show token
+              </button>
+            </>
           )}
 
           <button
             onClick={() => navigate("/createsensor")}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+            className="bg-green-600 hover:bg-green-700 dark:text-white text-black px-4 py-2 rounded"
           >
             + Add sensor
           </button>
 
           <button
             onClick={logout}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+            className="bg-red-600 hover:bg-red-700 dark:text-white text-black px-4 py-2 rounded"
           >
             Logout
           </button>
@@ -172,6 +202,24 @@ export default function Dashboard() {
           onClick={() => setIsMenuOpen(false)}
           className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm z-40"
         ></div>
+      )}
+
+      {showSensorTokenOpen && (
+        <div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center"
+            onClick={handleCloseShowSensorToken}
+        >
+          <div
+              className="dark:bg-gray-900 bg-white h-[70%] w-[50%] m-auto p-5 border-2 border-black rounded-[10px] shadow flex gap-5"
+              onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col self-center-safe items-center">
+                <p className="text-2xl dark:text-white text-black text-center">Copy the token of "{showSensorToken.name}":</p>
+                <span className="text-green-500 text-3xl">{showSensorToken.api_key}</span>
+                <button className="mt-20" onClick={handleCloseShowSensorToken}>Done</button>
+            </div>
+          </div>
+        </div>
       )}
 
       <SimulateDataModal

@@ -119,15 +119,15 @@ export default function CreateNewUser() {
     }, [username]);
 
     return (
-        <div className="min-h-screen min-w-screen flex items-center justify-center bg-black-500">
-            <div className="w-full max-w-sm bg-stone-700 shadow-lg rounded-lg p-6 space-y-4">
+        <div className="min-h-screen min-w-screen flex items-center justify-center bg-cyan-50 dark:bg-stone-700">
+            <div className="w-full max-w-sm bg-cyan-200 dark:bg-stone-700 shadow-lg rounded-lg p-6 space-y-4">
                 <h1 className="text-2xl font-semibold text-center mb-4">
                     Create a New User
                 </h1>
                 <div className="flex flex-col">
                     <label className="text-sm mb-1">Username</label>
                     <input
-                        className={`w-full rounded px-3 py-2 border focus:outline-none focus:ring-2 ${
+                        className={`bg-white dark:bg-stone-700 w-full rounded px-3 py-2 border focus:outline-none focus:ring-2 ${
                             isUsernameValid
                                 ? "border-green-400 focus:ring-green-500"
                                 : "border-red-400 focus:ring-red-500"
@@ -145,7 +145,7 @@ export default function CreateNewUser() {
                     <label className="text-sm mb-1">Password</label>
                     <div className="relative">
                         <input
-                            className={`w-full rounded px-3 py-2 border focus:outline-none focus:ring-2 ${
+                            className={`bg-white dark:bg-stone-700 w-full rounded px-3 py-2 border focus:outline-none focus:ring-2 ${
                                 isPasswordValid
                                     ? "border-green-400 focus:ring-green-500"
                                     : "border-red-400 focus:ring-red-500"
@@ -158,7 +158,7 @@ export default function CreateNewUser() {
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-0 text-sm text-gray-300"
+                            className="absolute right-0 text-sm dark:text-gray-300 text-black"
                         >
                             {showPassword ? "Hide" : "Show"}
                         </button>
@@ -171,7 +171,7 @@ export default function CreateNewUser() {
                     <label className="text-sm mb-1">Confirm Password</label>
                     <div className="relative">
                         <input
-                            className={`w-full rounded px-3 py-2 border focus:outline-none focus:ring-2 ${
+                            className={`bg-white dark:bg-stone-700 w-full rounded px-3 py-2 border focus:outline-none focus:ring-2 ${
                                 isConfirmPasswordValid
                                     ? "border-green-400 focus:ring-green-500"
                                     : "border-red-400 focus:ring-red-500"
@@ -184,7 +184,7 @@ export default function CreateNewUser() {
                         <button
                             type="button"
                             onClick={() => setShowConfirm(!showConfirm)}
-                            className="absolute right-0 text-sm text-gray-300"
+                            className="absolute right-0 text-sm dark:text-gray-300 text-black"
                         >
                             {showConfirm ? "Hide" : "Show"}
                         </button>
@@ -199,15 +199,15 @@ export default function CreateNewUser() {
                     disabled={isNotCreatable}
                     className={
                         isNotCreatable
-                            ? "w-full bg-gray-400 text-gray-700 py-2 rounded cursor-not-allowed"
-                            : "w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
+                            ? "w-full bg-gray-400 dark:text-gray-700 text-gray-200 py-2 rounded cursor-not-allowed"
+                            : "w-full bg-blue-600 hover:bg-blue-700 dark:text-white text-black py-2 rounded"
                     }
                     onClick={createANewUser}
                 >
                     Create new user
                 </button>
                 <button
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
+                    className="w-full bg-blue-600 hover:bg-blue-700 dark:text-white text-black py-2 rounded"
                     onClick={() => navigate("/")}
                 >
                     Back

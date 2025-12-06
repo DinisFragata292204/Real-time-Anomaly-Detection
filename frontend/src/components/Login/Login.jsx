@@ -53,8 +53,8 @@ export default function SimpleLogin(){
     }, [username, password])
 
     return (
-        <div className="min-h-screen min-w-screen flex items-center justify-center bg-black-500">
-            <div className="w-full max-w-sm bg-stone-700 shadow-lg rounded-lg p-6 space-y-4">
+        <div className="min-h-screen min-w-screen flex items-center justify-center bg-cyan-50 dark:bg-stone-700">
+            <div className="w-full max-w-sm dark:bg-stone-700 bg-cyan-200 shadow-lg rounded-lg p-6 space-y-4">
                 <h1 className="text-2xl font-semibold text-center">Login</h1>
 
                 <input
@@ -62,7 +62,7 @@ export default function SimpleLogin(){
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Username"
-                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-stone-700"
                 />
                 <div className="relative">
                     <input
@@ -70,12 +70,12 @@ export default function SimpleLogin(){
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Password"
-                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-stone-700"
                     />
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-0 text-sm text-gray-300"
+                        className="absolute right-0 text-sm dark:text-gray-300 text-black"
                     >
                         {showPassword ? "Hide" : "Show"}
                     </button>
@@ -92,8 +92,8 @@ export default function SimpleLogin(){
                     disabled={isNotValidLogin}
                         className={
                             isNotValidLogin
-                                ? "w-full bg-gray-400 text-gray-700 py-2 rounded cursor-not-allowed"
-                                : "w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded"
+                                ? "w-full bg-gray-400 dark:text-gray-700 text-gray-100 py-2 rounded cursor-not-allowed"
+                                : "w-full bg-blue-600 hover:bg-blue-700 dark:text-white text-black font-medium py-2 rounded"
                         }
                     onClick={SendLoginToAPI}
                 >
@@ -108,7 +108,7 @@ export default function SimpleLogin(){
                     
                 <button
                     onClick={() => navigate("/createNewUser")}
-                    className="w-full border border-gray-300 text-white font-medium py-2 rounded hover:bg-gray-100"
+                    className="w-full border border-gray-300 dark:text-white text-black font-medium py-2 rounded hover:bg-gray-100"
                 >
                     Create new user
                 </button>

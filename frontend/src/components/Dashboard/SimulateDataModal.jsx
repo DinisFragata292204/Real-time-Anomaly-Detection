@@ -74,8 +74,8 @@ export default function SimulateDataModal({onButtonClick, onButtonStopClick, mes
                         disabled={keyOfAPI === ""}
                         className={
                             keyOfAPI !== ""
-                                ? "w-full bg-blue-600 text-white font-medium py-2 rounded hover:bg-blue-700 mt-5"
-                                : "w-full bg-gray-400 text-gray-700 font-medium py-2 rounded mt-5 cursor-not-allowed"
+                                ? "w-full bg-blue-600 dark:text-white text-black font-medium py-2 rounded hover:bg-blue-700 mt-5"
+                                : "w-full bg-gray-400 dark:text-gray-700 text-gray-200 font-medium py-2 rounded mt-5 cursor-not-allowed"
                         }
                         onClick={handleClick}
                     >

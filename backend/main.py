@@ -52,6 +52,13 @@ class checkSensorAPIOutput(BaseModel):
     class Config:
         from_attributes = True
 
+class showSensorTokenOutput(BaseModel):
+    name: str
+    api_key: str
+    class Config:
+        from_attributes = True
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -101,6 +108,12 @@ class ReturnSensorsOfUser(BaseModel):
 
 class check_if_user_exists_input(BaseModel):
     username: str
+
+class SensorExists(BaseModel):
+    name: str
+
+    class Config:
+        from_attributes = True
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     token = credentials.credentials
@@ -198,8 +211,21 @@ def get_sensor_data(sensor_id: int, db: Session = Depends(get_db), current_user:
     return db.query(SensorData_class).order_by(desc(SensorData_class.timestamp)).filter(SensorData_class.sensor_id == sensor_id).all()
 
 @app.get("/user/sensor/alerts/{sensor_id}", response_model=List[AlertOutput])
-def get_alerts(sensor_id: int, db: Session = Depends(get_db)):
+def get_alerts(sensor_id: int, db: Session = Depends(get_db), current_user: User_Class = Depends(get_current_user)):
     return db.query(Alert_class).filter(Alert_class.sensor_id == sensor_id).all()
+
+@app.get("/user/check_if_sensor_exists/{sensor_name}")
+def check_if_sensor_exists(sensor_name: str, db: Session = Depends(get_db), current_user: User_Class = Depends(get_current_user)):
+    
+    exists = db.query(Sensor_class).filter(
+        Sensor_class.name == sensor_name,
+        Sensor_class.user_id == current_user.id
+    ).first()
+
+    if exists:
+        return {"exists": True}
+
+    return {"exists": False}
 
 @app.get("/user/get_sensors", response_model=List[ReturnSensorsOfUser])
 def get_sensors_of_user(db: Session = Depends(get_db), current_user: User_Class = Depends(get_current_user)):
@@ -214,7 +240,11 @@ def get_sensors_of_user(sensor_id: int, db: Session = Depends(get_db), current_u
 
     return sensor
 
+@app.get("/user/show_sensor_token/{sensor_id}", response_model=showSensorTokenOutput)
+def get_sensors_of_user(sensor_id: int, db: Session = Depends(get_db), current_user: User_Class = Depends(get_current_user)):
+    sensor = db.query(Sensor_class).filter(Sensor_class.user_id == current_user.id, Sensor_class.id == sensor_id).first()
 
-#@app.get("/user/me")
-#def me(current_user = Depends(get_current_user)):
-#   return current_user
+    if not sensor:
+        raise HTTPException(status_code=404, detail="Sensor not found")
+
+    return sensor
