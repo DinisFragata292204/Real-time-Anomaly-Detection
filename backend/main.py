@@ -115,6 +115,7 @@ class SensorExists(BaseModel):
         from_attributes = True
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    print("VERIFY KEY:", key)
     if credentials is None:
         raise HTTPException(401, "Authentication required.")
     token = credentials.credentials
@@ -135,6 +136,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(oauth2_
 
 @app.post("/login", response_model=Token)
 def login(data: LoginInput, db: Session = Depends(get_db)):
+    print("LOGIN KEY:", key)
     get_data_of_a_user = db.query(User_Class).where(User_Class.username == data.username).first()
     if not get_data_of_a_user:
         raise(HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found."))
@@ -142,6 +144,7 @@ def login(data: LoginInput, db: Session = Depends(get_db)):
     if not verify_password:
         raise(HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Password doesn't match."))
     encoded = jwt.encode({"sub": get_data_of_a_user.username, "exp": datetime.now(timezone.utc) + timedelta(days=1)}, key, algorithm="HS256")
+    print("TOKEN GENERATED:", encoded)
     return {"access_token": encoded, "token_type": "bearer"}
 
 @app.post("/receive_data", response_model=receiveSensorOutput, status_code=201)
