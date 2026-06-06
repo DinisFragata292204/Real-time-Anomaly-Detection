@@ -6,18 +6,30 @@ import os
 
 load_dotenv()
 
-USER = os.getenv("USER")
-PASSWORD = os.getenv("PASSWORD")
-HOST = os.getenv("HOST")
-PORT = os.getenv("PORT")
-DATABASE = os.getenv("DATABASE")
+HOST = os.getenv("MYSQLHOST")
+PORT = os.getenv("MYSQLPORT")
+USER = os.getenv("MYSQLUSER")
+PASSWORD = os.getenv("MYSQLPASSWORD")
+DATABASE = os.getenv("MYSQLDATABASE")
 
-DATABASE_URL = f"mysql+mysqlconnector://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
+DATABASE_URL = (
+    f"mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
+)
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    pool_recycle=3600,
+    connect_args={"charset": "utf8mb4"}
+)
 
-Base.metadata.create_all(engine)
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+Base.metadata.create_all(bind=engine)
 
 def get_db():
     db = SessionLocal()

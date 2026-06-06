@@ -19,8 +19,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173"
+        "https://real-time-anomaly-detection.dinisfragata2.workers.dev/"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -116,6 +115,8 @@ class SensorExists(BaseModel):
         from_attributes = True
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    if credentials is None:
+        raise HTTPException(401, "Authentication required.")
     token = credentials.credentials
     try:
         payload = jwt.decode(token, key, algorithms=["HS256"])
