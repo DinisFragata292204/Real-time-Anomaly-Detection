@@ -122,8 +122,9 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(oauth2_
         payload = jwt.decode(token, key, algorithms=["HS256"])
     except ExpiredSignatureError:
         raise HTTPException(401, "Token expired.")
-    except JWTError:
-        raise HTTPException(401, "Invalid token.")
+    except JWTError as e:
+        print("JWT ERROR:", str(e))
+        raise HTTPException(401, f"Invalid token: {str(e)}")
     username = payload.get("sub")
     if username is None:
         raise HTTPException(401, "Invalid token format.")
