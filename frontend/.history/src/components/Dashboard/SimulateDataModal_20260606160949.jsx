@@ -14,7 +14,7 @@ export default function SimulateDataModal({onButtonClick, onButtonStopClick, mes
         async function CheckIfSensorToken() {
             if (sensor_id == null) {return}
 
-            const res = await fetch(`${API_URL}/user/check_sensor_api/${sensor_id}`, {
+            const res = await fetch(`http://127.0.0.1:8000/user/check_sensor_api/${sensor_id}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

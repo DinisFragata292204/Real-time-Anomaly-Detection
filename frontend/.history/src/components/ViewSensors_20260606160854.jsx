@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export default function CreateSensor() {
-    const API_URL = "https://resplendent-clarity-production-e82d.up.railway.app";
+    
 
     const [data, setData] = useState(null);
     const [name, setName] = useState("");
@@ -9,7 +9,7 @@ export default function CreateSensor() {
     const [localization, setLocalization] = useState("");
 
     async function createANewSensor() {
-        const res = await fetch(`${API_URL}/create_sensor`, {
+        const res = await fetch("http://127.0.0.1:8000/create_sensor", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

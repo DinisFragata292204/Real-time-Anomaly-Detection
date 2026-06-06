@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function SimpleLogin(){
     const API_URL = "https://resplendent-clarity-production-e82d.up.railway.app";
-
+    
     const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
@@ -16,7 +16,7 @@ export default function SimpleLogin(){
     const [showPassword, setShowPassword] = useState(false);
 
     async function SendLoginToAPI() {
-        const response = await fetch(`${API_URL}/login`, {
+        const response = await fetch("http://127.0.0.1:8000/login", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({username, password})

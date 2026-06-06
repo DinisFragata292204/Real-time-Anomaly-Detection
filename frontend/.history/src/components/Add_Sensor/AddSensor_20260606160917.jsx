@@ -103,7 +103,7 @@ export default function CreateSensor() {
             const Errors = {}
 
             if (name.length >= 4 && type.length >= 4 && localization.length >= 4) {
-                const res = await fetch(`${API_URL}/user/check_if_sensor_exists/${name}`, {
+                const res = await fetch(`http://127.0.0.1:8000/user/check_if_sensor_exists/${name}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

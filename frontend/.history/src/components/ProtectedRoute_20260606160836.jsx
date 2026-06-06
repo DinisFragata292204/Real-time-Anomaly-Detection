@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 export default function ProtectedRoute({ children }) {
     const navigate = useNavigate();
 
-    const API_URL = "https://resplendent-clarity-production-e82d.up.railway.app";
-
     const [isChecking, setIsChecking] = useState(true);
     const [isValid, setIsValid] = useState(false);
 
@@ -20,7 +18,7 @@ export default function ProtectedRoute({ children }) {
 
         async function validateToken() {
             try {
-                const res = await fetch(`${API_URL}/user/isloggedin`, {
+                const res = await fetch("http://127.0.0.1:8000/user/isloggedin", {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import DataOfASensorTable from "./DataOfASensorTable";
 
 export default function SimulateDataModal({onButtonClick, onButtonStopClick, message, isOpen, onClose, ifsimulationIsRunning, sensor_id, simulateDatamessage, dataOfASensor}) {
-    const API_URL = "https://resplendent-clarity-production-e82d.up.railway.app";
+    
     
     const [keyOfAPI, setkeyOfAPI] = useState("");
     const [token, setToken] = useState("");
@@ -14,7 +14,7 @@ export default function SimulateDataModal({onButtonClick, onButtonStopClick, mes
         async function CheckIfSensorToken() {
             if (sensor_id == null) {return}
 
-            const res = await fetch(`${API_URL}/user/check_sensor_api/${sensor_id}`, {
+            const res = await fetch(`http://127.0.0.1:8000/user/check_sensor_api/${sensor_id}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

@@ -20,7 +20,7 @@ export default function ProtectedRoute({ children }) {
 
         async function validateToken() {
             try {
-                const res = await fetch(`${API_URL}/user/isloggedin`, {
+                const res = await fetch("http://127.0.0.1:8000/user/isloggedin", {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,

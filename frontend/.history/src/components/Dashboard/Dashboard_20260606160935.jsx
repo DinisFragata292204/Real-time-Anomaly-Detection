@@ -99,7 +99,7 @@ export default function Dashboard() {
 
     const value = Math.floor(Math.random() * (46 - 20 + 1)) + 20;
 
-    const res = await fetch(`${API_URL}/receive_data`, {
+    const res = await fetch("http://127.0.0.1:8000/receive_data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -139,7 +139,7 @@ export default function Dashboard() {
 
   async function show_SensorToken() {
     if (sensor_id) {
-      const res = await fetch(`${API_URL}/user/show_sensor_token/${sensor_id}`,
+      const res = await fetch(`http://127.0.0.1:8000/user/show_sensor_token/${sensor_id}`,
         {
           method: "GET",
           headers: {
