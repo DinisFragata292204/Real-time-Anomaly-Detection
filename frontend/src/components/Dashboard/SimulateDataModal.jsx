@@ -24,7 +24,7 @@ export default function SimulateDataModal({onButtonClick, onButtonStopClick, mes
             const data = await res.json();
             setToken(data);
 
-            if (token.api_key == keyOfAPI){
+            if (data && data.api_key == keyOfAPI){
                 setMessageAboutToken(true);
             } else {
                 setMessageAboutToken(false);
@@ -32,7 +32,7 @@ export default function SimulateDataModal({onButtonClick, onButtonStopClick, mes
         }
         CheckIfSensorToken();
 
-    }, [keyOfAPI]);
+    }, [keyOfAPI, sensor_id]);
     
     if (!isOpen) return null;
 
