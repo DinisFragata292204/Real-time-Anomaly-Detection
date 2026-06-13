@@ -1,176 +1,91 @@
-Real-Time Anomaly Detection Platform
-------------------------------------
+# Real-Time Anomaly Detection Platform
 
-This project is a **full-stack web platform** for sensor monitoring and anomaly detection, built with _FastAPI_, _SQLAlchemy_, _MySQL_, and _React_.
+A full-stack IoT monitoring platform designed for real-world sensor integrations, anomaly detection, and automated alerting.
 
-The goal of the application is to simulate a **real-world IoT monitoring system**, where each user can create and manage their own sensors, receive data from them, and visualize both sensor readings and automatically generated alerts when abnormal values are detected.
+Originally conceptualized for smart beehive monitoring systems.
 
-The platform is designed with authentication, and clean architecture in mind. Only the authenticated user who created a sensor can access its data and alerts.
+## Key Features
 
-This project was developed primarily as a learning-oriented full-stack application, focusing on understanding how authentication, APIs, databases, and frontend interfaces work together in a realistic scenario.
+- User authentication with JWT
+- Sensor creation and management
+- Real-time sensor simulation
+- Automatic anomaly detection
+- Alert generation system
+- User-specific dashboards
+- Protected API endpoints
 
-**Project Structure**
+## Screenshots
 
-## Project Structure
+### Dashboard
 
-```text
-Real-time-Anomaly-Detection/
-├── backend/
-│   ├── main.py
-│   ├── models.py
-│   ├── database.py
-│   ├── requirements.txt
-│   └── .env
-│
-├── frontend/
-│   ├── src/
-│   ├── package.json
-│   └── vite.config.js
-│
-└── README.md
+<img width="1536" height="693" alt="image" src="https://github.com/user-attachments/assets/3098edd4-c57d-4a83-bf57-b8e3641b3d9d" />
+
+### Sensor Data Simulation
+
+<img width="1533" height="693" alt="image" src="https://github.com/user-attachments/assets/ea33b5bf-569c-47b1-9860-a4787c11a222" />
+
+## Live Demo
+
+Frontend:
+[Link](https://real-time-anomaly-detection.dinisfragata2.workers.dev)
+
+Backend API:
+[Link](https://resplendent-clarity-production-e82d.up.railway.app/)
+
+API Documentation:
+[Docs](https://resplendent-clarity-production-e82d.up.railway.app/docs)
+
+## Project Vision
+
+This platform was originally designed as part of a larger smart beehive monitoring system.
+
+The goal was to connect physical sensors (such as temperature, humidity, weight, or sound sensors) installed inside a beehive to an Arduino-based device, which would continuously send data through the internet to this platform.
+
+The system would then:
+
+* Store sensor readings
+* Detect abnormal behavior automatically
+* Alert the beekeeper in real time
+* Help prevent hive issues such as overheating, humidity imbalance, or colony stress
+
+Although the physical hardware layer was not built, the software architecture was fully designed to support real sensor integration.
+
+To simulate this real-world flow, the current platform includes sensor simulation endpoints and anomaly detection logic.
+
+## Architecture
+
+Sensor / Arduino Device
+
+↓
+
+FastAPI API Endpoint
+
+↓
+
+Anomaly Detection Logic
+
+↓
+
+MySQL Database
+
+↓
+
+React Dashboard
+
+↓
+
+Alert System
+
+
+## Example Sensor Payload
+
+```json
+{
+  "sensor_id": "sensor_001",
+  "temperature": 38.5,
+  "humidity": 92,
+  "timestamp": "2026-06-13T14:30:00Z"
+}
 ```
 
-Backend Setup
--------------
-
-**1\. Create a Virtual Environment**
-
-```cd backend``` 
-
-```python -m venv venv```   
-
-**1.1. Activate the virtual environment:**
-
-Windows
-
-```venv\Scripts\activate```  
-
-Linux / macOS
-
-```source venv/bin/activate```   
-
-**2\. Install Dependencies**
-
-With the virtual environment activated:
-
-```pip install -r requirements.txt ```   
-
-**3\. Database Setup**
-
-Create a MySQL database manually (for example using MySQL Workbench).
-
-**Example:**
-
-```CREATE DATABASE realtime_anomaly_detection;```   
-
-⚠️ **The application automatically creates all tables** on startup using SQLAlchemy, so no manual table creation is required.
-
-**4\. Environment Variables (.env)**
-
-Inside the backend folder, create a file called **.env**.
-
-**Example .env file:**
-
-```env 
-USER=root
-PASSWORD=your_mysql_password
-HOST=localhost  PORT=3306
-DATABASE=realtime_anomaly_detection
-KEY=your_secret_jwt_key
-```   
-
-**Explanation:**
-
-USER, PASSWORD, HOST, PORT, DATABASE → MySQL connection
-
-KEY → Secret key used to sign JWT tokens
-
-**5\. Run the Backend**
-
-Still inside the backend folder:
-
-```python -m uvicorn main:app --reload```   
-
-If everything is correct, the API will be available at:
-
-```http://127.0.0.1:8000```   
-
-You can also access the automatic API documentation at:
-
-```http://127.0.0.1:8000/docs```   
-
-Frontend Setup
---------------
-
-**1\. Install Dependencies**
-
-Inside the frontend folder:
-
-```cd frontend```   
-
-```npm install```   
-
-**2\. Run the Frontend**
-
-```npm run dev```   
-
-The frontend will be available at:
-
-```http://127.0.0.1:5173```
-
-Application Flow
-----------------
-
-1.  User creates an account
-    
-2.  User logs in and receives a JWT token
-    
-3.  Token is stored on the client side
-    
-4.  User accesses protected routes (Dashboard)
-    
-5.  User creates sensors
-    
-6.  Sensors send data to the backend
-    
-7.  Abnormal values generate alerts automatically
-    
-8.  User visualizes sensors, data, and alerts in the dashboard
-    
-
-Technologies Used
------------------
-
-**Backend**
-
-*   Python
-    
-*   FastAPI
-    
-*   SQLAlchemy
-    
-*   MySQL
-    
-*   JWT
-    
-*   Pydantic
-    
-
-**Frontend**
-
-*   React
-    
-*   React Router
-    
-*   JavaScript
-    
-*   Fetch API
-
-## Security Note
-
-This project uses JWT authentication. Tokens are stored on the client side.
-
-## Project Status
-
-This project is under active development and serves as a learning-oriented
-full-stack application.
+This endpoint can receive data from any external IoT device capable of sending HTTP requests, making the platform hardware-agnostic.
