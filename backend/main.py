@@ -19,7 +19,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://real-time-anomaly-detection.dinisfragata2.workers.dev"
+        "https://sensor-dashboard-anomaly-detection.vercel.app/"
     ],
     allow_credentials=True,
     allow_methods=["*"],
